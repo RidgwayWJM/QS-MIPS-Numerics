@@ -29,7 +29,7 @@ namespace GlobalParams
 	double D2, beta_decay, alpha;
 
 	//cell parameters
-	double a, L, K, lambda, m, epsilon_reg;
+	double a, L, K, lambda, rho_star, epsilon_reg;
 
 	//swimming parameters
 	double D1_star, D1_p_star, D_inf_0;	//swimming motility coefficient, it's derivative at u=u*, and a parameter representing either D_inf or D_0
@@ -57,10 +57,10 @@ namespace GlobalParams
 		//double epsilon_IC = 1e-4;
 		double gaussian = std::exp(-0.5*lambda/epsilon_IC*std::pow(x[0]-u_star,2)); //gaussian factor that shows up in the steady-state and perturbation
 		double normalization = std::sqrt(lambda/(2*M_PI*epsilon_IC));
-		double ss = m*normalization*gaussian;	//steady-state chemical structure
+		double ss = rho_star*normalization*gaussian;	//steady-state chemical structure
 		// compute steady-state AI concentration	
-		double ce_quad_B = K - m*alpha*(a + L)/(beta_decay*lambda);
-		double ce_quad_C = -a*alpha*m*K/(beta_decay*lambda);
+		double ce_quad_B = K - rho_star*alpha*(a + L)/(beta_decay*lambda);
+		double ce_quad_C = -a*alpha*rho_star*K/(beta_decay*lambda);
 		double ce = 0.5*(-ce_quad_B + std::sqrt(ce_quad_B*ce_quad_B - 4.0*ce_quad_C)); //homogeneous equilibrium value of AI
 
 		//random perturbation to steady-state
@@ -69,7 +69,7 @@ namespace GlobalParams
 		sol[0] = ss + amplitude*r*ss;
 		r = 2*(static_cast <double> (rand()) / static_cast <double> (RAND_MAX) - 0.5);	// new random number
 		sol[1] = ce + amplitude*r*ce;
-		sol[2] = u_star*m;
+		sol[2] = u_star*rho_star;
 	}
 
 	// function for evaluating the effective diffusion coefficient
@@ -832,7 +832,7 @@ void FullDensityProblem<DENSITY_ELEMENT, HELM_ELEMENT>::set_initial_condition()	
    		oomph_info << "total population is " << total_population <<"...adding a constant to the IC to correct... \n";
    		for(unsigned i=0; i<num_nod_density; i++)	{
    			double nval = density_msh_pt()->node_pt(i)->value(itime,0);
-   			density_msh_pt()->node_pt(i)->set_value(itime,0,nval*m*domain_vol/total_population);
+   			density_msh_pt()->node_pt(i)->set_value(itime,0,nval*rho_star*domain_vol/total_population);
    		}
 		oomph_info << "total population is now " << compute_solution_mass(itime) << endl;
 
@@ -1025,7 +1025,7 @@ void FullDensityProblem<DENSITY_ELEMENT, HELM_ELEMENT>::output_parameters_to_fil
 	param_file << "a = "<< a <<"\nL = " << L <<"\nK = " << K <<"\nlambda = " << lambda
 		<< "\nbeta = " << beta_decay << "\nalpha = " << alpha << "\nD2 = " << D2 <<"\nD1_star = " 
 		<< D1_star << "\nD1_p_star = " << D1_p_star << "\nD_inf_0 = " <<
-		D_inf_0 << "\nm = " << m << "\nepsilon = " << epsilon_reg << endl;
+		D_inf_0 << "\nrho_star = " << rho_star << "\nepsilon = " << epsilon_reg << endl;
 }
 
 //===========================End of problem class definitions ==============================
@@ -1070,7 +1070,7 @@ int read_input_params_from_file()	{
 			else if(param_name=="D2")	{D2 = val;  		}
 			else if(param_name=="beta")	{beta_decay = val;  	}
 			else if(param_name=="alpha")	{alpha = val;  		}
-			else if(param_name=="m")	{m = val;  		}
+			else if(param_name=="rho_star")	{rho_star = val;  	}
 			else if(param_name=="D1_star")	{D1_star = val;		}
 			else if(param_name=="D1_p_star"){D1_p_star = val;	}
 			else if(param_name=="D_inf_0")	{D_inf_0 = val;		}
@@ -1107,8 +1107,8 @@ int read_input_params_from_file()	{
 // computes the intracellular concentration at which the kinetics is in equilibrium with spatially homogeneous AI c=ce. i.e. f(u_star,ce)=0
 void compute_ustar_homogeneous()
 {
-	double ce_quad_B = K - m*alpha*(a + L)/(beta_decay*lambda);
-	double ce_quad_C = -a*alpha*m*K/(beta_decay*lambda);
+	double ce_quad_B = K - rho_star*alpha*(a + L)/(beta_decay*lambda);
+	double ce_quad_C = -a*alpha*rho_star*K/(beta_decay*lambda);
 	double ce = 0.5*(-ce_quad_B + std::sqrt(ce_quad_B*ce_quad_B - 4.0*ce_quad_C)); //homogeneous equilibrium value of AI
 	u_star = (a + L*ce/(K+ce))/lambda; 
 	oomph_info << "Equilibrium AI concentration in the uniform state: ce = " << ce << endl;
