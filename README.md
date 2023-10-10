@@ -1,5 +1,5 @@
 # QS-MIPS-Numerics
-> Numerically solves the governing equations in https://www.biorxiv.org/content/10.1101/2023.04.01.535124v1.abstract. 
+> Numerically solves the governing equations in https://www.biorxiv.org/content/10.1101/2023.04.01.535124v2.
 
 This code implements a Galerkin finite element method with quadratic Lagrange elements and BDF2 time stepping. The implementation uses the open-source library oomph-lib (see https://oomph-lib.github.io/oomph-lib/doc/html/index.html). 
 
