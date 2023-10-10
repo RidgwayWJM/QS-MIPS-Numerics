@@ -36,7 +36,7 @@ printf "a = 0.3\n" >>  $INPUT_FILE
 printf "L = 10.0\n" >>  $INPUT_FILE
 printf "K = 50.0\n" >>  $INPUT_FILE
 printf "lambda = 2.0\n" >>  $INPUT_FILE
-printf "m=25.0\n" >>  $INPUT_FILE	#m=\rho_* in paper
+printf "rho_star=25.0\n" >>  $INPUT_FILE	
 printf "epsilon = 4.0e-2\n" >>  $INPUT_FILE
 	
 #****************** numerical parameters **********************
