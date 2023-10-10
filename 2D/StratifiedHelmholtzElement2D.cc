@@ -59,7 +59,8 @@ void StratifiedHelmholtzElement2D::fill_in_generic_residual_contribution_strat_h
                         interpolated_c += field_value_strat_helmholtz(j)*psi[j];
                         interpolated_dcdt += dcdt_strat_helmholtz(j)*psi[j];
                 }
-				
+
+		//evaluate source function
 		double source = 0.0;
 		get_source_strat_helmholtz(ipt, interpolated_x, &source);
 	
